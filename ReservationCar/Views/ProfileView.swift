@@ -1,20 +1,20 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @ObservedObject var userController: UserController // Usamos el controlador para manejar los datos del usuario
+    @ObservedObject var userController: UserController
     
-    @State private var user: User // Usamos el modelo User aquí para trabajar con los datos de la vista
+    @State private var user: User
     @State private var newName = ""
     @State private var newEmail = ""
     @State private var newPassword = ""
-    @State private var newProfileImage: UIImage? // Cambiar a UIImage para trabajar con la imagen
+    @State private var newProfileImage: UIImage?
 
     @State private var showingImagePicker = false // Estado para mostrar el ImagePicker
     @State private var selectedImage: UIImage? = nil // Imagen seleccionada
     
     init(userController: UserController) {
         self.userController = userController
-        _user = State(initialValue: userController.users.first!) // Cargar el primer usuario o el usuario actual según sea necesario
+        _user = State(initialValue: userController.users.first!)
     }
 
     var body: some View {

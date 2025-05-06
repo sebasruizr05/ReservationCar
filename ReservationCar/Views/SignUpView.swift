@@ -4,7 +4,7 @@ struct SignUpView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
-    @State private var role: UserRole = .client // Por defecto, el usuario es un cliente
+    @State private var role: UserRole = .client 
     
     var body: some View {
         VStack {
