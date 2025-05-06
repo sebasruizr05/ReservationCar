@@ -5,8 +5,10 @@ struct AddVehicleView: View {
     @State private var name = ""
     @State private var price = ""
     @State private var description = ""
-    @State private var image = ""
-
+    @State private var image = "" // Esta variable guardará la imagen seleccionada
+    @State private var selectedImage: UIImage? = nil // Imagen seleccionada
+    @State private var showImagePicker: Bool = false // Mostrar ImagePicker
+    
     var body: some View {
         VStack {
             Text("Add Vehicle")
@@ -14,23 +16,46 @@ struct AddVehicleView: View {
                 .fontWeight(.bold)
                 .padding()
 
+            if let selectedImage = selectedImage {
+                Image(uiImage: selectedImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 150, height: 150)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.top, 20)
+            } else {
+                Image(systemName: "photo.on.rectangle.angled") // Ícono si no hay imagen
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 150, height: 150)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.top, 20)
+            }
+            
+            // Botón para seleccionar imagen
+            Button("Select Image") {
+                showImagePicker.toggle()
+            }
+            .padding()
+            .foregroundColor(.blue)
+            
+            // Nombre del vehículo
             TextField("Name", text: $name)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
 
+            // Precio del vehículo
             TextField("Price", text: $price)
                 .keyboardType(.decimalPad)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
 
+            // Descripción del vehículo
             TextField("Description", text: $description)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
 
-            TextField("Image", text: $image)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-
+            // Agregar vehículo
             Button(action: {
                 addVehicle()
             }) {
@@ -45,6 +70,9 @@ struct AddVehicleView: View {
             .padding()
         }
         .padding()
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(selectedImage: $selectedImage) // Mostrar ImagePicker para seleccionar imagen
+        }
     }
 
     func addVehicle() {
@@ -53,7 +81,11 @@ struct AddVehicleView: View {
             return
         }
         
-        let newVehicle = Vehicle(name: name, price: vehiclePrice, image: image, description: description)
+        // Si no se ha seleccionado imagen, usar un nombre predeterminado
+        let vehicleImage = selectedImage != nil ? "\(UUID()).jpg" : "default_image.jpg"
+        
+        // Crear un nuevo vehículo y agregarlo al controlador
+        let newVehicle = Vehicle(name: name, price: vehiclePrice, image: vehicleImage, description: description)
         vehicleController.addVehicle(vehicle: newVehicle)
     }
 }

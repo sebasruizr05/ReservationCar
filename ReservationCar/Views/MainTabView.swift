@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     var role: UserRole
+    @ObservedObject var userController: UserController // Añadir el controlador de usuario
     
     var body: some View {
         TabView {
@@ -19,7 +20,8 @@ struct MainTabView: View {
                     }
             }
             
-            ProfileView()
+            // Aquí pasamos el userController a ProfileView
+            ProfileView(userController: userController)
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
@@ -29,5 +31,11 @@ struct MainTabView: View {
                     Label("Map", systemImage: "map.fill")
                 }
         }
+    }
+}
+
+struct MainTabView_Previews: PreviewProvider {
+    static var previews: some View {
+        MainTabView(role: .client, userController: UserController()) // Asegúrate de pasar el controlador de usuario
     }
 }

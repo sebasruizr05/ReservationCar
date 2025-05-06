@@ -5,6 +5,7 @@ struct RentadorView: View {
     @Environment(\.dismiss) var dismiss
 
     @ObservedObject var reservationController: ReservationController
+    @ObservedObject var userController: UserController // Asegúrate de tener esto para controlar el usuario
     
     var body: some View {
         TabView {
@@ -30,7 +31,7 @@ struct RentadorView: View {
                 }
             
             // Vista del perfil
-            ProfileView() // Aquí se muestra el perfil del rentador
+            ProfileView(userController: userController) // Aquí pasas el userController
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")
@@ -62,6 +63,6 @@ struct RentadorView: View {
 
 struct RentadorView_Previews: PreviewProvider {
     static var previews: some View {
-        RentadorView(reservationController: ReservationController()) // Pasar el controlador para pruebas
+        RentadorView(reservationController: ReservationController(), userController: UserController()) // Asegúrate de pasar ambos controladores para pruebas
     }
 }

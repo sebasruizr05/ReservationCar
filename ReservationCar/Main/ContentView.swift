@@ -3,11 +3,12 @@ import SwiftUI
 struct ContentView: View {
     @State private var isLoggedIn = false // Estado para saber si el usuario está logueado
     @State private var role: UserRole = .client // Para almacenar el rol del usuario (cliente o admin)
-    
+    @State private var userController = UserController() // Controlador de usuarios
+
     var body: some View {
         if isLoggedIn {
             // Si el usuario está logueado, mostramos la vista principal con Tabs
-            MainTabView(role: role) // Pasamos el rol para decidir qué vistas mostrar
+            MainTabView(role: role, userController: userController) // Pasamos el rol y el controlador de usuarios
         } else {
             // Si no está logueado, mostramos la pantalla de inicio
             StartView(isLoggedIn: $isLoggedIn, role: $role) // Usamos StartView para login o registro

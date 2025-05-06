@@ -10,6 +10,7 @@ struct LoginView: View {
     @State private var navigateToVehicles = false // Estado para redirigir al Rentador
     @State private var navigateToAdmin = false // Estado para redirigir al Admin
     @State private var reservationController = ReservationController()
+    @State private var userController = UserController() // Instancia del controlador de usuarios
     
     var body: some View {
         NavigationStack { // Usamos NavigationStack para permitir la navegación
@@ -52,7 +53,7 @@ struct LoginView: View {
                 .padding()
                 
                 // Uso de NavigationLink con valores dinámicos para activar el destino según el estado
-                NavigationLink(destination: RentadorView(reservationController: reservationController), isActive: $navigateToVehicles) {
+                NavigationLink(destination: RentadorView(reservationController: reservationController, userController: userController), isActive: $navigateToVehicles) {
                     EmptyView() // Esconde el link visualmente, pero sigue funcionando
                 }
                 
