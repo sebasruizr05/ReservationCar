@@ -9,7 +9,7 @@ struct VehicleDetailView: View {
     @State private var numberOfDays = 0   // Número de días de la reserva
     
     var body: some View {
-        ScrollView { // Permite el desplazamiento si es necesario
+        ScrollView {
             VStack {
                 // Imagen del vehículo
                 Image(vehicle.image)
@@ -87,7 +87,7 @@ struct VehicleDetailView: View {
                 }
                 .padding(.top, 20)
                 
-                Spacer() // Asegura que los elementos estén alineados correctamente en la parte superior
+                Spacer()
             }
             .padding()
         }

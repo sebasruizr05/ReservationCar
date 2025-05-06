@@ -28,7 +28,6 @@ struct SignUpView: View {
             .padding()
             
             Button(action: {
-                // Aquí va la lógica para registrar al usuario
                 registerUser()
             }) {
                 Text("Sign Up")

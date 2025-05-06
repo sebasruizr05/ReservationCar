@@ -24,12 +24,12 @@ struct AdminView: View {
                                 .foregroundColor(.blue)
                             Text("Manage Reservations")
                                 .font(.headline)
-                                .foregroundColor(.blue) // Solo texto azul
+                                .foregroundColor(.blue)
                         }
                         .padding()
                     }
-                    .frame(maxWidth: .infinity) // Centra el botón horizontalmente
-                    .padding(.top, 50) // Le damos un margen para que no esté pegado al texto anterior
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 50)
                     
                     // Texto descriptivo para Manage Reservations
                     Text("Here you can view and manage reservations made by users.")

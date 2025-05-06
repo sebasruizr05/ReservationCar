@@ -34,9 +34,7 @@ struct ProfileView: View {
                 .foregroundColor(.gray)
                 .padding(.top, 4)
             
-            // Aquí puedes agregar más detalles de la cuenta, como un botón para editar el perfil
             Button("Edit Profile") {
-                // Mostrar campos para editar el perfil
                 self.newName = user.name
                 self.newEmail = user.email
                 self.newPassword = user.password

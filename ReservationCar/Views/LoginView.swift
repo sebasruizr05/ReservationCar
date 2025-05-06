@@ -9,7 +9,7 @@ struct LoginView: View {
     @State private var isAuthenticated = false // Estado para verificar si el login fue exitoso
     @State private var navigateToVehicles = false // Estado para redirigir al Rentador
     @State private var navigateToAdmin = false // Estado para redirigir al Admin
-    @State private var reservationController = ReservationController() // Inicializa el controlador de reservas
+    @State private var reservationController = ReservationController()
     
     var body: some View {
         NavigationStack { // Usamos NavigationStack para permitir la navegación
@@ -46,9 +46,8 @@ struct LoginView: View {
                         .padding()
                 }
                 
-                // Button de Regresar en caso de que sea necesario
                 Button("Back") {
-                    presentationMode.wrappedValue.dismiss() // Regresa a la pantalla de inicio
+                    presentationMode.wrappedValue.dismiss()
                 }
                 .padding()
                 

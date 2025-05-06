@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AddVehicleView: View {
-    @ObservedObject var vehicleController: VehicleController // Recibe el controlador
+    @ObservedObject var vehicleController: VehicleController
     @State private var name = ""
     @State private var price = ""
     @State private var description = ""
@@ -50,7 +50,6 @@ struct AddVehicleView: View {
     func addVehicle() {
         // Validar que el precio sea un número válido
         guard let vehiclePrice = Double(price), !name.isEmpty, !description.isEmpty else {
-            // Podrías mostrar un mensaje de error si no se llena correctamente
             return
         }
         
@@ -61,6 +60,6 @@ struct AddVehicleView: View {
 
 struct AddVehicleView_Previews: PreviewProvider {
     static var previews: some View {
-        AddVehicleView(vehicleController: VehicleController()) // Pasar controlador para pruebas
+        AddVehicleView(vehicleController: VehicleController())
     }
 }

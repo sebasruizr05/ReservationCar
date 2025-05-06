@@ -1,7 +1,6 @@
 import SwiftUI
 import UIKit
 
-// ImagePicker es un wrapper para UIImagePickerController en SwiftUI
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage? // Vínculo con la imagen seleccionada
     
@@ -14,7 +13,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[.originalImage] as? UIImage {
-                parent.selectedImage = image // Guarda la imagen seleccionada
+                parent.selectedImage = image
             }
             picker.dismiss(animated: true, completion: nil)
         }
@@ -31,11 +30,10 @@ struct ImagePicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
-        picker.sourceType = .photoLibrary // Usa la galería de fotos
+        picker.sourceType = .photoLibrary
         return picker
     }
     
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-        // Aquí no se necesita actualizar nada, ya que el picker es manejado automáticamente por UIKit
     }
 }

@@ -22,7 +22,7 @@ struct RegisterView: View {
                 TextField("Cédula", text: $cedula)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .keyboardType(.numberPad) // Para cédula, usamos el teclado numérico
+                    .keyboardType(.numberPad)
                 
                 TextField("Email", text: $email)
                     .padding()
@@ -69,13 +69,11 @@ struct RegisterView: View {
     }
     
     func registerUser() {
-        // Verificación de contraseñas
         if password != confirmPassword {
             passwordMatch = false
             return
         }
         
-        // Lógica para el registro (puedes agregar la lógica para guardar los datos aquí)
         print("User registered successfully")
         print("Name: \(name), Cédula: \(cedula), Email: \(email), Password: \(password)")
     }

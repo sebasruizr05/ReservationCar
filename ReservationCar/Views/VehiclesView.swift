@@ -3,7 +3,7 @@ import SwiftUI
 struct VehiclesView: View {
     @State private var searchText = "" // Estado para la búsqueda
     
-    @StateObject private var reservationController = ReservationController() // Instanciar el ReservationController
+    @StateObject private var reservationController = ReservationController()
     
     let vehicleData = [
         Vehicle(name: "Mazda CX-30", price: 100, image: "car1", description: "The Mazda CX-30 is a compact SUV with a sleek and dynamic design, ideal for both city driving and adventure."),
@@ -27,7 +27,7 @@ struct VehiclesView: View {
                 
                 List(filteredVehicles) { vehicle in
                     NavigationLink(destination: VehicleDetailView(vehicle: vehicle, reservationController: reservationController)) {
-                        VehicleCell(vehicle: vehicle) // Celda que se muestra en la lista
+                        VehicleCell(vehicle: vehicle)
                     }
                 }
                 .navigationBarTitle("Vehicles")

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct RentadorView: View {
     @Environment(\.presentationMode) var presentationMode
-    @Environment(\.dismiss) var dismiss // Nueva forma de cerrar la vista
+    @Environment(\.dismiss) var dismiss
 
     @ObservedObject var reservationController: ReservationController
     
@@ -56,7 +56,6 @@ struct RentadorView: View {
     
     func logoutUser() {
         print("User logged out")
-        // Cerrar la vista y volver al login
         dismiss() // Usamos dismiss() para salir de la vista actual y regresar
     }
 }

@@ -14,7 +14,7 @@ struct UserReservationView: View {
                 List(reservationController.reservations) { reservation in
                     HStack {
                         // Imagen del vehículo
-                        Image(reservation.vehicleImage) // Asegúrate de que vehicleImage esté en tu modelo de reserva
+                        Image(reservation.vehicleImage)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 50, height: 50)

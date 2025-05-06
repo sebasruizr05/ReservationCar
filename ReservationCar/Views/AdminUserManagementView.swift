@@ -23,9 +23,8 @@ struct AdminUserManagementView: View {
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
-                    .swipeActions { // Este es el botón de swipe para eliminar
+                    .swipeActions {
                         Button(role: .destructive) {
-                            // Aquí eliminamos el usuario
                             if let index = userController.users.firstIndex(where: { $0.id == user.id }) {
                                 userController.deleteUser(at: IndexSet([index]))
                             }

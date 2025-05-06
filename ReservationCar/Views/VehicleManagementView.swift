@@ -15,7 +15,6 @@ struct VehicleManagementView: View {
                 .padding()
             
             List {
-                // Se asegura de que Vehicle implemente Identifiable
                 ForEach(vehicleController.vehicles) { vehicle in
                     HStack {
                         Image(vehicle.image)
@@ -34,12 +33,10 @@ struct VehicleManagementView: View {
                             .foregroundColor(.gray)
                     }
                     .onTapGesture {
-                        // Al hacer clic en el vehículo, se guarda el vehículo seleccionado y se muestra la vista de edición
                         selectedVehicle = vehicle
                         showEditVehicle.toggle()
                     }
                     .swipeActions {
-                        // Agregar acciones de eliminación
                         Button(role: .destructive) {
                             vehicleController.deleteVehicle(at: IndexSet([vehicleController.vehicles.firstIndex(where: { $0.id == vehicle.id }) ?? 0])) // Elimina el vehículo de la lista
                         } label: {
@@ -67,7 +64,6 @@ struct VehicleManagementView: View {
             AddVehicleView(vehicleController: vehicleController) // Presenta la vista de agregar vehículo
         }
         .sheet(isPresented: $showEditVehicle, onDismiss: nil) {
-            // Presenta la vista de edición solo si hay un vehículo seleccionado
             if let selectedVehicle = selectedVehicle {
                 VehicleEditView(vehicle: selectedVehicle, vehicleController: vehicleController)
             }

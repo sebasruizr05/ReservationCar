@@ -42,7 +42,6 @@ struct WelcomeView: View {
             Spacer()
         }
         .padding()
-        // Presentar Login o Registro dependiendo del valor de isLogin
         .fullScreenCover(isPresented: $isPresented) {
             if isLogin {
                 LoginView() // Presenta la vista de Login
