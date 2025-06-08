@@ -21,7 +21,7 @@ struct MainTabView: View {
             }
             
             // Aquí pasamos el userController a ProfileView
-            ProfileView(userController: userController)
+            ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }

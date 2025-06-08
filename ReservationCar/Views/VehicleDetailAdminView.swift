@@ -2,13 +2,13 @@ import SwiftUI
 
 struct VehicleDetailAdminView: View {
     @ObservedObject var controller: VehicleController
-    @Binding var vehicle: Vehicle // El vehículo que estamos editando
-    
+    @Binding var vehicle: Vehicle
+
     @State private var vehicleName: String
     @State private var vehiclePrice: Double
     @State private var vehicleDescription: String
     @State private var vehicleImage: String
-    
+
     init(vehicle: Binding<Vehicle>, controller: VehicleController) {
         _vehicle = vehicle
         _vehicleName = State(initialValue: vehicle.wrappedValue.name)
@@ -17,7 +17,7 @@ struct VehicleDetailAdminView: View {
         _vehicleImage = State(initialValue: vehicle.wrappedValue.image)
         self.controller = controller
     }
-    
+
     var body: some View {
         ScrollView {
             VStack {
@@ -28,29 +28,29 @@ struct VehicleDetailAdminView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .padding(.top, 20)
                     .shadow(radius: 10)
-                
+
                 TextField("Vehicle Name", text: $vehicleName)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(.title)
-                
+
                 TextField("Price", value: $vehiclePrice, format: .number)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .keyboardType(.decimalPad)
                     .font(.title2)
-                
+
                 TextField("Description", text: $vehicleDescription)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(.body)
                     .frame(height: 100)
-                
+
                 TextField("Image Name", text: $vehicleImage)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(.subheadline)
-                
+
                 Button(action: {
                     saveVehicleChanges()
                 }) {
@@ -67,7 +67,7 @@ struct VehicleDetailAdminView: View {
         }
         .navigationBarTitle("Edit Vehicle", displayMode: .inline)
     }
-    
+
     func saveVehicleChanges() {
         controller.updateVehicle(vehicle: vehicle, newName: vehicleName, newPrice: vehiclePrice, newDescription: vehicleDescription, newImage: vehicleImage)
     }

@@ -111,9 +111,10 @@ struct AdminView: View {
     
     // Lógica de cierre de sesión
     func logoutUser() {
-        print("User logged out")
-        presentationMode.wrappedValue.dismiss() // Regresar al login
+        AuthService.shared.signOut()
+        presentationMode.wrappedValue.dismiss()
     }
+
 }
 
 struct AdminView_Previews: PreviewProvider {

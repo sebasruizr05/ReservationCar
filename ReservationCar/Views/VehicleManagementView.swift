@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct VehicleManagementView: View {
-    @ObservedObject var vehicleController = VehicleController() // Controlador de vehículos
+    @ObservedObject var vehicleController = VehicleController()
     
-    @State private var showAddVehicle = false // Para mostrar la vista de agregar vehículo
-    @State private var showEditVehicle = false // Para mostrar la vista de editar vehículo
-    @State private var selectedVehicle: Vehicle? = nil // Para almacenar el vehículo seleccionado
-    
+    @State private var showAddVehicle = false
+    @State private var showEditVehicle = false
+    @State private var selectedVehicle: Vehicle? = nil
+
     var body: some View {
         VStack {
             Text("Manage Vehicles")
@@ -22,56 +22,47 @@ struct VehicleManagementView: View {
                             .scaledToFit()
                             .frame(width: 50, height: 50)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
-                        
+
                         Text(vehicle.name)
                             .font(.headline)
-                        
+
                         Spacer()
-                        
+
                         Text("$\(vehicle.price, specifier: "%.2f")")
                             .font(.subheadline)
                             .foregroundColor(.gray)
                     }
                     .onTapGesture {
                         selectedVehicle = vehicle
-                        showEditVehicle.toggle()
-                    }
-                    .swipeActions {
-                        Button(role: .destructive) {
-                            vehicleController.deleteVehicle(at: IndexSet([vehicleController.vehicles.firstIndex(where: { $0.id == vehicle.id }) ?? 0])) // Elimina el vehículo de la lista
-                        } label: {
-                            Label("Delete", systemImage: "trash.fill")
-                        }
+                        showEditVehicle = true
                     }
                 }
                 .onDelete(perform: deleteVehicle)
             }
-            
-            Button(action: {
-                showAddVehicle.toggle()
-            }) {
-                Text("Add Vehicle")
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+
+            Button("Add Vehicle") {
+                showAddVehicle = true
             }
+            .font(.headline)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.green)
+            .foregroundColor(.white)
+            .cornerRadius(10)
             .padding()
         }
         .sheet(isPresented: $showAddVehicle) {
-            AddVehicleView(vehicleController: vehicleController) // Presenta la vista de agregar vehículo
+            AddVehicleView(vehicleController: vehicleController)
         }
-        .sheet(isPresented: $showEditVehicle, onDismiss: nil) {
-            if let selectedVehicle = selectedVehicle {
-                VehicleEditView(vehicle: selectedVehicle, vehicleController: vehicleController)
+        .sheet(isPresented: $showEditVehicle) {
+            if let vehicleToEdit = selectedVehicle {
+                VehicleEditView(vehicle: vehicleToEdit, vehicleController: vehicleController)
             }
         }
     }
-    
+
     func deleteVehicle(at offsets: IndexSet) {
-        vehicleController.deleteVehicle(at: offsets) // Llama al método del controlador para eliminar el vehículo
+        vehicleController.deleteVehicle(at: offsets)
     }
 }
 

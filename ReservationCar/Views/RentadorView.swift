@@ -1,68 +1,64 @@
 import SwiftUI
 
 struct RentadorView: View {
-    @Environment(\.presentationMode) var presentationMode
     @Environment(\.dismiss) var dismiss
 
-    @ObservedObject var reservationController: ReservationController
-    @ObservedObject var userController: UserController 
-    
     var body: some View {
         TabView {
-            // Vista de la lista de vehículos
-            VehiclesView() // Aquí se muestra la lista de vehículos
+            // Lista de vehículos
+            VehiclesView()
                 .tabItem {
                     Image(systemName: "car.fill")
                     Text("Car List")
                 }
-            
-            // Vista de reservas del usuario
-            UserReservationView(reservationController: reservationController)
+
+            // Reservas del usuario autenticado
+            UserReservationView()
                 .tabItem {
                     Image(systemName: "calendar")
                     Text("My Reservations")
                 }
-            
-            // Vista del mapa
-            MapView() // Aquí se muestra el mapa
+
+            // Mapa
+            MapView()
                 .tabItem {
                     Image(systemName: "map.fill")
                     Text("Map")
                 }
-            
-            // Vista del perfil
-            ProfileView(userController: userController)
+
+            // Perfil
+            ProfileView()
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")
                 }
-            
-            // Botón para cerrar sesión
+
+            // Logout
             Button(action: {
-                logoutUser() // Cierra sesión
+                logoutUser()
             }) {
                 VStack {
-                    Image(systemName: "power") // Icono de apagar (cerrar sesión)
+                    Image(systemName: "power")
                     Text("Logout")
                 }
             }
             .tabItem {
-                Image(systemName: "power") // Icono de apagado
+                Image(systemName: "power")
                 Text("Logout")
             }
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
     }
-    
+
     func logoutUser() {
-        print("User logged out")
-        dismiss() // Usamos dismiss() para salir de la vista actual y regresar
+        AuthService.shared.signOut()
+        dismiss()
     }
 }
 
 struct RentadorView_Previews: PreviewProvider {
     static var previews: some View {
-        RentadorView(reservationController: ReservationController(), userController: UserController())
+        RentadorView()
     }
 }

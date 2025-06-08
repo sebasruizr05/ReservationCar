@@ -2,53 +2,53 @@ import SwiftUI
 
 struct RegisterView: View {
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State private var name = ""
     @State private var cedula = ""
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
-    
-    @State private var passwordMatch = true // Estado para verificar si las contraseñas coinciden
-    
+
+    @State private var passwordMatch = true
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+
     var body: some View {
-        NavigationStack { // Usamos NavigationStack para permitir el botón de regreso
+        NavigationStack {
             VStack {
-                TextField("Name", text: $name)
+                TextField("Nombre", text: $name)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.words) // Autocapitalización para el nombre
-                
+                    .autocapitalization(.words)
+
                 TextField("Cédula", text: $cedula)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .keyboardType(.numberPad)
-                
+
                 TextField("Email", text: $email)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.none) // Deshabilitar autocapitalización para el email
-                
-                SecureField("Password", text: $password)
+                    .autocapitalization(.none)
+
+                SecureField("Contraseña", text: $password)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.none)
-                
-                SecureField("Confirm Password", text: $confirmPassword)
+
+                SecureField("Confirmar Contraseña", text: $confirmPassword)
                     .padding()
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.none)
-                
+
                 if !passwordMatch {
                     Text("Las contraseñas no coinciden")
                         .foregroundColor(.red)
                         .padding(.top, 5)
                 }
-                
+
                 Button(action: {
                     registerUser()
                 }) {
-                    Text("Register")
+                    Text("Registrarse")
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.green.opacity(0.8))
@@ -56,25 +56,52 @@ struct RegisterView: View {
                         .cornerRadius(10)
                 }
                 .padding()
-                
-                Button("Back") {
-                    presentationMode.wrappedValue.dismiss() // Regresa a la pantalla de inicio
+
+                Button("Volver") {
+                    presentationMode.wrappedValue.dismiss()
                 }
                 .padding()
+
+                Spacer()
             }
             .padding()
-            .navigationBarBackButtonHidden(false) // Aseguramos que el botón de regreso esté visible
-            .navigationTitle("Register") // Título para la barra de navegación
+            .navigationBarBackButtonHidden(false)
+            .navigationTitle("Registro")
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Registro"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
         }
     }
-    
+
     func registerUser() {
-        if password != confirmPassword {
-            passwordMatch = false
+        guard !name.isEmpty, !cedula.isEmpty, !email.isEmpty, !password.isEmpty, !confirmPassword.isEmpty else {
+            alertMessage = "Por favor completa todos los campos."
+            showAlert = true
             return
         }
-        
-        print("User registered successfully")
-        print("Name: \(name), Cédula: \(cedula), Email: \(email), Password: \(password)")
+
+        guard password == confirmPassword else {
+            passwordMatch = false
+            alertMessage = "Las contraseñas no coinciden."
+            showAlert = true
+            return
+        }
+
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        AuthService.shared.signUp(name: name, cedula: cedula, email: trimmedEmail, password: trimmedPassword) { result in
+            switch result {
+            case .success:
+                alertMessage = "Usuario registrado correctamente."
+                showAlert = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            case .failure(let error):
+                alertMessage = "Error al registrar: \(error.localizedDescription)"
+                showAlert = true
+            }
+        }
     }
 }

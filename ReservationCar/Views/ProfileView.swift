@@ -1,136 +1,163 @@
 import SwiftUI
+import FirebaseAuth
+import FirebaseFirestore
 
 struct ProfileView: View {
-    @ObservedObject var userController: UserController
-    
-    @State private var user: User
-    @State private var newName = ""
-    @State private var newEmail = ""
-    @State private var newPassword = ""
-    @State private var newProfileImage: UIImage?
+    @State private var name = ""
+    @State private var email = ""
+    @State private var password = ""
+    @State private var imageURL = ""
+    @State private var selectedImage: UIImage? = nil
+    @State private var showingImagePicker = false
+    @State private var isLoading = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
-    @State private var showingImagePicker = false // Estado para mostrar el ImagePicker
-    @State private var selectedImage: UIImage? = nil // Imagen seleccionada
-    
-    init(userController: UserController) {
-        self.userController = userController
-        _user = State(initialValue: userController.users.first!)
-    }
+    let userID = Auth.auth().currentUser?.uid
 
     var body: some View {
         VStack {
-            // Mostrar la imagen de perfil
             if let selectedImage = selectedImage {
                 Image(uiImage: selectedImage)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 150, height: 150)
                     .clipShape(Circle())
-                    .overlay(Circle().stroke(Color.white, lineWidth: 4))
                     .shadow(radius: 10)
-                    .padding()
+            } else if !imageURL.isEmpty, let url = URL(string: imageURL) {
+                AsyncImage(url: url) { image in
+                    image.resizable()
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: 150, height: 150)
+                .clipShape(Circle())
+                .shadow(radius: 10)
             } else {
-                // Si no hay imagen seleccionada, mostramos la imagen predeterminada
-                Image(user.profileImage) // Usar el nombre de la imagen desde el modelo
+                Image(systemName: "person.crop.circle.fill")
                     .resizable()
-                    .scaledToFit()
                     .frame(width: 150, height: 150)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                    .shadow(radius: 10)
-                    .padding()
+                    .foregroundColor(.gray)
             }
-            
-            // Mostrar el nombre del usuario
-            Text(user.name)
-                .font(.title)
-                .fontWeight(.bold)
-                .padding(.top, 8)
-            
-            // Mostrar el correo electrónico
-            Text(user.email)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .padding(.top, 4)
-            
-            // Botón para editar el perfil
-            Button("Edit Profile") {
-                self.newName = user.name
-                self.newEmail = user.email
-                self.newPassword = user.password
-                self.newProfileImage = UIImage(named: user.profileImage)
+
+            TextField("Nombre", text: $name)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+
+            TextField("Email", text: $email)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+
+            SecureField("Nueva contraseña", text: $password)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+
+            Button("Seleccionar imagen de perfil") {
+                showingImagePicker.toggle()
             }
             .padding()
             .background(Color.blue)
             .foregroundColor(.white)
-            .cornerRadius(10)
-            
-            // Edición de los campos
-            VStack {
-                TextField("New Name", text: $newName)
-                    .padding()
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                TextField("New Email", text: $newEmail)
-                    .padding()
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                SecureField("New Password", text: $newPassword)
-                    .padding()
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                // Selector de imagen
-                Button("Select Profile Image") {
-                    showingImagePicker.toggle()
-                }
-                .padding()
-                .background(Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                
-                Button("Save Changes") {
-                    updateUserProfile()
-                }
-                .padding()
-                .background(Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+            .cornerRadius(8)
+
+            Button("Guardar cambios") {
+                updateProfile()
             }
             .padding()
-            
+            .background(Color.green)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+
             Spacer()
         }
-        .navigationBarTitle("Profile", displayMode: .inline)
         .padding()
         .onAppear {
-            loadUserData() // Cargar los datos del usuario
+            loadUserData()
         }
         .sheet(isPresented: $showingImagePicker) {
-            ImagePicker(selectedImage: $selectedImage) // Selector de imágenes
+            ImagePicker(selectedImage: $selectedImage)
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Perfil"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
         }
     }
-    
-    // Cargar los datos de usuario al aparecer la vista
+
     func loadUserData() {
-        self.user = userController.users.first!
-    }
-    
-    // Actualizar el perfil del usuario
-    func updateUserProfile() {
-        let newImageName = "new_image_name"
+        guard let userID = userID else { return }
 
-        userController.editUserProfile(user: user, newName: newName, newEmail: newEmail, newPassword: newPassword, newProfileImage: newImageName)
-        
-        // Actualizar la vista después de guardar los cambios
-        user.name = newName
-        user.email = newEmail
-        user.password = newPassword
-        user.profileImage = newImageName
+        let db = Firestore.firestore()
+        db.collection("users").document(userID).getDocument { snapshot, error in
+            if let data = snapshot?.data() {
+                self.name = data["name"] as? String ?? ""
+                self.email = data["email"] as? String ?? ""
+                self.imageURL = data["profileImageURL"] as? String ?? ""
+            }
+        }
     }
-}
 
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView(userController: UserController())
+    func updateProfile() {
+        guard let userID = userID else { return }
+
+        // Validación básica
+        guard !name.isEmpty, !email.isEmpty else {
+            alertMessage = "El nombre y el correo no pueden estar vacíos."
+            showAlert = true
+            return
+        }
+
+        isLoading = true
+        let db = Firestore.firestore()
+        var updates: [String: Any] = ["name": name, "email": email]
+        let dispatchGroup = DispatchGroup()
+
+        // Subir imagen si fue seleccionada
+        if let image = selectedImage {
+            dispatchGroup.enter()
+            ImageUploadService.uploadProfileImage(image, for: userID) { result in
+                switch result {
+                case .success(let url):
+                    updates["profileImageURL"] = url
+                case .failure(let error):
+                    alertMessage = "Error al subir la imagen: \(error.localizedDescription)"
+                    showAlert = true
+                }
+                dispatchGroup.leave()
+            }
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            db.collection("users").document(userID).updateData(updates) { error in
+                if let error = error {
+                    alertMessage = "Error al actualizar perfil: \(error.localizedDescription)"
+                } else {
+                    alertMessage = "Perfil actualizado correctamente."
+                    self.imageURL = updates["profileImageURL"] as? String ?? self.imageURL
+                }
+                showAlert = true
+            }
+
+            // Actualizar email y contraseña en Firebase Auth
+            if let user = Auth.auth().currentUser {
+                if email != user.email {
+                    user.updateEmail(to: email) { error in
+                        if let error = error {
+                            alertMessage = "Error al actualizar el email: \(error.localizedDescription)"
+                            showAlert = true
+                        }
+                    }
+                }
+
+                if !password.isEmpty {
+                    user.updatePassword(to: password) { error in
+                        if let error = error {
+                            alertMessage = "Error al actualizar la contraseña: \(error.localizedDescription)"
+                            showAlert = true
+                        }
+                    }
+                }
+            }
+
+            isLoading = false
+        }
     }
 }

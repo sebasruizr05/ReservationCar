@@ -6,18 +6,15 @@ class VehicleController: ObservableObject {
         Vehicle(name: "Lexus RX", price: 150, image: "car2", description: "A luxury SUV featuring advanced technology and a premium interior, providing comfort and performance."),
         Vehicle(name: "Toyota Tacoma", price: 200, image: "car3", description: "A rugged and reliable pickup truck, perfect for off-road adventures.")
     ]
-    
-    // Función para agregar un vehículo
+
     func addVehicle(vehicle: Vehicle) {
         vehicles.append(vehicle)
     }
-    
-    // Función para eliminar un vehículo
+
     func deleteVehicle(at offsets: IndexSet) {
         vehicles.remove(atOffsets: offsets)
     }
-    
-    // Función para editar un vehículo
+
     func updateVehicle(vehicle: Vehicle, newName: String, newPrice: Double, newDescription: String, newImage: String) {
         if let index = vehicles.firstIndex(where: { $0.id == vehicle.id }) {
             vehicles[index].name = newName

@@ -1,9 +1,9 @@
 import Foundation
 
 struct Vehicle: Identifiable {
-    var id = UUID()
+    var id: String = UUID().uuidString
     var name: String
     var price: Double
-    var image: String
+    var image: String // ← usamos imagen local
     var description: String
 }
